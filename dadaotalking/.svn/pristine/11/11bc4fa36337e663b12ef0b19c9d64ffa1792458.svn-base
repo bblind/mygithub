@@ -1,0 +1,36 @@
+/**
+ * 
+ * 构建组：大道金服科技部
+ * 作者:caihewei
+ * 邮箱:caihewei@ddjf.com.cn
+ * 日期:2017年8月1日下午3:15:51
+ * 版权：大道金服
+ * 
+ */
+package com.ddjf.dao;
+
+import com.ddjf.pojo.Foods;
+
+/**
+ * 
+ * 构建组：大道金服科技部
+ * 作者:caihewei
+ * 日期:2017年8月1日下午3:15:51
+ * 功能说明：
+ * 
+ */
+public interface IFoodsDao {
+	
+	int deleteByPrimaryKey(Integer id);
+
+    int insert(IFoodsDao record);
+
+    int insertSelective(IFoodsDao record);
+
+    Foods selectByName(String name);
+
+    int updateByNameSelective(IFoodsDao record);
+
+    int updateByName(IFoodsDao record);
+
+}

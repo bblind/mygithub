@@ -1,0 +1,138 @@
+/**
+ * 
+ * 构建组：大道金服科技部
+ * 作者:caihewei
+ * 邮箱:caihewei@ddjf.com.cn
+ * 日期:2017年7月29日下午5:11:07
+ * 版权：大道金服
+ * 
+ */
+package com.ddjf.controller;
+
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.ddjf.service.IPostService;
+import com.ddjf.service.IUserService;
+import com.ddjf.util.CaptchaUtil;
+
+/**
+ * 
+ * 构建组：大道金服科技部
+ * 作者:caihewei
+ * 日期:2017年7月29日下午5:11:07
+ * 功能说明：
+ * 
+ */
+@Controller
+@RequestMapping("/user")
+public class UserController {
+
+	protected final transient Logger log = LoggerFactory.getLogger(this
+			.getClass());
+
+	@Autowired
+	private IUserService iUserService;
+
+	@Autowired
+	private IPostService iPostService;
+
+	@RequestMapping("/check.jpg")
+	public void createCode(HttpServletRequest request,
+			HttpServletResponse response) throws IOException {
+		// 通知浏览器不要缓存  
+		response.setHeader("Expires", "-1");
+		response.setHeader("Cache-Control", "no-cache");
+		response.setHeader("Pragma", "-1");
+		CaptchaUtil util = CaptchaUtil.getInstance();
+		// 将验证码输入到session中，用来验证  
+		String code = util.getString();
+		request.getSession().setAttribute("code", code);
+		checkCode(request.getSession(), code);
+		//System.out.println(request.getCookies()[1].getValue());
+
+		// 输出打web页面  
+		ImageIO.write(util.getImage(), "jpg", response.getOutputStream());
+	}
+
+	@RequestMapping(value = "/login", method = RequestMethod.POST)
+	public String login(HttpServletRequest req, HttpServletResponse res,
+			@RequestParam("username") String name,
+			@RequestParam("pwd") String password,
+			@RequestParam("validationCode") String code, Model model) {
+		HttpSession session = req.getSession();
+		String check = checkCode(req.getSession(), code);
+
+		if (iUserService.login(name, password) && check.equals("0")) {
+			session.setAttribute("username", name);
+			Cookie c1 = new Cookie("name", name);
+			c1.setPath("/");
+			Cookie c2 = new Cookie("password", name);
+			c2.setPath("/");
+			c1.setMaxAge(60 * 12);
+			c2.setMaxAge(60 * 16);
+			res.addCookie(c1);
+			res.addCookie(c2);
+			session.setAttribute("postList", iPostService.allPost(1));
+			return "redirect:/tosuccess";
+		}
+		model.addAttribute("checkCode", check);
+		model.addAttribute("msg", "密码错误");
+		return "";
+	}
+
+	@RequestMapping(value = "/registry", method = RequestMethod.POST)
+	public String registry(@RequestParam("username") String name,
+			@RequestParam("pwd") String password, Model model) {
+		if (iUserService.registry(name, password)) {
+			String s = "注册成功";
+			//封装要显示到视图的数据
+			model.addAttribute("msg", s);
+
+			return "/index";
+		}
+		String s = "注册失败，账号已存在！";
+		model.addAttribute("msg", s);
+		return "/index";
+	}
+
+	/** 
+	 * 验证码验证 
+	 *  
+	 * @param session 
+	 * @param code 
+	 */
+	private String checkCode(HttpSession session, String code) {
+		String codeSession = (String) session.getAttribute("code");
+		if (StringUtils.isEmpty(codeSession)) {
+			log.error("没有生成验证码信息");
+			throw new IllegalStateException("ERR-01000");
+		}
+		if (StringUtils.isEmpty(code)) {
+			log.error("未填写验证码信息");
+			return "未填写验证码信息";
+		}
+		if (codeSession.equalsIgnoreCase(code)) {
+			// 验证码通过 
+			return "0";
+		} else {
+			log.error("验证码错误");
+			return "验证码错误";
+		}
+	}
+}

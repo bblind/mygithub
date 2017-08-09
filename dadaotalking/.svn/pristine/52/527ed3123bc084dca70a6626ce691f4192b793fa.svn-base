@@ -1,0 +1,134 @@
+/**
+ * 
+ * 构建组：大道金服科技部
+ * 作者:caihewei
+ * 邮箱:caihewei@ddjf.com.cn
+ * 日期:2017年7月29日下午5:11:07
+ * 版权：大道金服
+ * 
+ */
+package com.ddjf.controller;
+
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.ddjf.service.IUserService;
+import com.ddjf.util.CaptchaUtil;
+
+/**
+ * 
+ * 构建组：大道金服科技部
+ * 作者:caihewei
+ * 日期:2017年7月29日下午5:11:07
+ * 功能说明：
+ * 
+ */
+@Controller
+@RequestMapping("/user")
+public class UserController {
+
+	protected final transient Logger log = LoggerFactory.getLogger(this
+			.getClass());
+
+	@Autowired
+	private IUserService iUserService;
+
+	@RequestMapping("/check.jpg")
+	public void createCode(HttpServletRequest request,
+			HttpServletResponse response) throws IOException {
+		// 通知浏览器不要缓存  
+		response.setHeader("Expires", "-1");
+		response.setHeader("Cache-Control", "no-cache");
+		response.setHeader("Pragma", "-1");
+		CaptchaUtil util = CaptchaUtil.getInstance();
+		// 将验证码输入到session中，用来验证  
+		String code = util.getString();
+		request.getSession().setAttribute("code", code);
+		checkCode(request.getSession(), code);
+		//System.out.println(request.getCookies()[1].getValue());
+		
+		// 输出打web页面  
+		ImageIO.write(util.getImage(), "jpg", response.getOutputStream());
+	}
+
+	/** 
+	 * 验证码验证 
+	 *  
+	 * @param session 
+	 * @param code 
+	 */
+	private boolean checkCode(HttpSession session, String code) {
+		String codeSession = (String) session.getAttribute("code");
+		if (StringUtils.isEmpty(codeSession)) {
+			log.error("没有生成验证码信息");
+			throw new IllegalStateException("ERR-01000");
+		}
+		if (StringUtils.isEmpty(code)) {
+			log.error("未填写验证码信息");
+			return false;
+		}
+		if (codeSession.equalsIgnoreCase(code)) {
+			// 验证码通过 
+			return true;
+		} else {
+			log.error("验证码错误");
+			return false;
+		}
+	}
+
+	@RequestMapping(value = "/login", method = RequestMethod.POST)
+	public String login(HttpServletRequest req, HttpServletResponse res,
+			@RequestParam("username") String name,
+			@RequestParam("pwd") String password,
+			@RequestParam("validationCode") String code) {
+		HttpSession session = req.getSession();
+		if(session.getAttribute("token")==null||!session.getAttribute("token").equals(req.getSession().getAttribute("token"))){
+			try {
+				System.out.println(00);
+				res.sendRedirect("/ssmweb/");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		session.removeAttribute("token");
+		//		boolean check = checkCode(req.getSession(), code);
+				if (iUserService.login(name, password)
+				&& checkCode(req.getSession(), code)) {
+			Cookie c1 = new Cookie("name", name);
+			c1.setPath("/");
+			Cookie c2 = new Cookie("password", name);
+			c2.setPath("/");
+			c1.setMaxAge(30);
+			c2.setMaxAge(30);
+			res.addCookie(c1);
+			res.addCookie(c2);
+			return "success";
+		}
+		return "fail";
+	}
+
+	@RequestMapping(value = "/registry", method = RequestMethod.POST)
+	public String registry(@RequestParam("username") String name,
+			@RequestParam("pwd") String password) {
+		System.out.println(name);
+		if (iUserService.registry(name, password))
+			return "success";
+		return "fail";
+	}
+}

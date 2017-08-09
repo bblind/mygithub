@@ -1,0 +1,79 @@
+/**
+ * 
+ * 构建组：大道金服科技部
+ * 作者:caihewei
+ * 邮箱:caihewei@ddjf.com.cn
+ * 日期:2017年8月1日下午3:06:40
+ * 版权：大道金服
+ * 
+ */
+package com.ddjf.pojo;
+
+import java.util.List;
+
+/**
+ * 
+ * 构建组：大道金服科技部
+ * 作者:caihewei
+ * 日期:2017年8月1日下午3:06:40
+ * 功能说明：
+ * 
+ */
+public class Boss {
+
+	private String name ;
+	
+	private String password;
+	
+	private List<Foods> store;
+
+	/**
+	 * 获取属性方法
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * 设置属性方法
+	 * @param name the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	/**
+	 * 获取属性方法
+	 * @return the password
+	 */
+	public String getPassword() {
+		return password;
+	}
+
+	/**
+	 * 设置属性方法
+	 * @param password the password to set
+	 */
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	/**
+	 * 获取属性方法
+	 * @return the store
+	 */
+	public List<Foods> getStore() {
+		return store;
+	}
+
+	/**
+	 * 设置属性方法
+	 * @param store the store to set
+	 */
+	public void setStore(List<Foods> store) {
+		this.store = store;
+	}
+	
+	
+}

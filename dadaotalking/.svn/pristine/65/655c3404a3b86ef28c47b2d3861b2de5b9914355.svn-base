@@ -1,0 +1,76 @@
+/**
+ * 
+ * 构建组：大道金服科技部
+ * 作者:caihewei
+ * 邮箱:caihewei@ddjf.com.cn
+ * 日期:2017年8月1日下午3:10:06
+ * 版权：大道金服
+ * 
+ */
+package com.ddjf.pojo;
+
+/**
+ * 
+ * 构建组：大道金服科技部
+ * 作者:caihewei
+ * 日期:2017年8月1日下午3:10:06
+ * 功能说明：
+ * 
+ */
+public class Foods {
+
+	private String name;
+	
+	private float price;
+
+	private int count;
+	
+	/**
+	 * 获取属性方法
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * 设置属性方法
+	 * @param name the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	/**
+	 * 获取属性方法
+	 * @return the price
+	 */
+	public float getPrice() {
+		return price;
+	}
+
+	/**
+	 * 设置属性方法
+	 * @param price the price to set
+	 */
+	public void setPrice(float price) {
+		this.price = price;
+	}
+
+	/**
+	 * 获取属性方法
+	 * @return the count
+	 */
+	public int getCount() {
+		return count;
+	}
+
+	/**
+	 * 设置属性方法
+	 * @param count the count to set
+	 */
+	public void setCount(int count) {
+		this.count = count;
+	}
+	
+}

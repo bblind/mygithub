@@ -1,0 +1,14 @@
+package com.ddjf.dao;
+
+import java.util.List;
+
+import com.ddjf.pojo.Reply;
+
+public interface IReplyDao {
+    int deleteByPrimaryKey(Integer id);
+
+    int insert(Reply record);
+
+    List<Reply> selectByPID(int pId);
+
+}

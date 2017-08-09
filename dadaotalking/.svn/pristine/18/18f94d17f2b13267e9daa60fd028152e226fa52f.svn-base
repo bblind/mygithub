@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ddjf.dao.IPostDao">
+	<resultMap id="BaseResultMap" type="com.ddjf.pojo.Post">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="content" property="content" jdbcType="VARCHAR" />
+		<result column="username" property="username" jdbcType="VARCHAR" />
+		<result column="date" property="date" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, title, content, username, date
+	</sql>
+	<select id="selectAll" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from post limit #{start}, #{limit}
+	</select>
+	<select id="selectByTitle" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from post
+		where title = #{title,jdbcType=VARCHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from post
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.ddjf.pojo.Post">
+		insert into post (
+		title, content, username, date
+		)
+		values ( #{title,jdbcType=VARCHAR},
+		#{content,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR},#{date,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+<!-- 	<update id="updateByUsername" parameterType="com.ddjf.pojo.Post">
+		update post
+		set
+		user_name = #{userName,jdbcType=VARCHAR}, password = #{password,jdbcType=VARCHAR},
+		failed_times = #{failedTimes,jdbcType=INTEGER}
+		where user_name =
+		#{userName,jdbcType=VARCHAR}
+	</update> -->
+</mapper>

@@ -1,0 +1,16 @@
+package com.ddjf.dao;
+
+import java.util.List;
+
+import com.ddjf.pojo.Post;
+
+public interface IPostDao {
+    int deleteByPrimaryKey(Integer id);
+
+    int insert(Post record);
+
+    List<Post> selectByTitle(String title);
+    
+    List<Post> selectAll();
+
+}

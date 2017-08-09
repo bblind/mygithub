@@ -1,0 +1,111 @@
+/**
+ * 
+ * 构建组：大道金服科技部
+ * 作者:caihewei
+ * 邮箱:caihewei@ddjf.com.cn
+ * 日期:2017年7月29日下午5:06:13
+ * 版权：大道金服
+ * 
+ */
+package com.ddjf.service.impl;
+
+import java.util.Timer;
+import java.util.TimerTask;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.ddjf.dao.IUserDao;
+import com.ddjf.pojo.User;
+import com.ddjf.service.IUserService;
+import com.ddjf.util.PasswordUtil;
+import com.ddjf.util.RandomUtil;
+
+/**
+ * 
+ * 构建组：大道金服科技部
+ * 作者:caihewei
+ * 日期:2017年7月29日下午5:06:13
+ * 功能说明：
+ * 
+ */
+@Service
+public class UserServiceImpl implements IUserService {
+
+	@Autowired
+	private IUserDao iUserDao;
+
+	/**
+	 * 构建组：大道金服科技部
+	 * 作者:caihewei
+	 * 日期:2017年7月29日下午5:54:07
+	 * 参数说明：@param name
+	 * 参数说明：@param pwd
+	 * 参数说明：@return
+	 * 功能说明：验证登陆
+	 */
+	@Override
+
+	public boolean login(String name, String password) {
+		// TODO Auto-generated method stub
+		//连续登陆失败次数
+		final User val = iUserDao.selectByUsername(name);
+		if (val == null)
+			return false;
+		if (val.getFailedTimes() == 3) {
+
+			Timer timer = new Timer(); 
+			timer.schedule(new TimerTask() {
+			public void run() {      
+				val.setFailedTimes(0);
+				iUserDao.updateByUsername(val);
+			}    
+			}, 1000*60);
+
+//			return false;
+		}
+		//加密秘钥
+		String preKey = val.getPreKey();
+		//数据库中存放的密码
+		String pwd = val.getPassword();
+		//加密后的密码
+		String encryptedPWD = PasswordUtil.encrypt(password, preKey);
+		if (pwd.equals(encryptedPWD))
+			return true;
+		else {
+			val.setFailedTimes(val.getFailedTimes() + 1);
+			iUserDao.updateByUsername(val);
+			return false;
+		}
+	}
+
+	/**
+	 * 构建组：大道金服科技部
+	 * 作者:caihewei
+	 * 日期:2017年8月1日上午11:11:08
+	 * 参数说明：@param name
+	 * 参数说明：@param pwd
+	 * 参数说明：@return
+	 * 功能说明：注册
+	 */
+	@Override
+	public boolean registry(String name, String password) {
+		//注册前校验
+		User val = iUserDao.selectByUsername(name);
+		if (val == null) {
+			String[] preKeys = RandomUtil.preKey();
+
+			//加密后的密码
+			String encryptedPWD = PasswordUtil.encrypt(password, preKeys[0]
+					+ preKeys[1]);
+			User user = new User();
+			user.setUserName(name);
+			user.setPreKey(preKeys[0] + preKeys[1]);
+			user.setPassword(encryptedPWD);
+			iUserDao.insert(user);
+			return true;
+		}
+		return false;
+	}
+
+}

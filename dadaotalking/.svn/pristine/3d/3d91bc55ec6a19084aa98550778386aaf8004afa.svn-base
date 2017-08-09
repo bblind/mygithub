@@ -1,0 +1,128 @@
+/**
+ * 
+ * 构建组：大道金服科技部
+ * 作者:caihewei
+ * 邮箱:caihewei@ddjf.com.cn
+ * 日期:2017年8月4日上午10:25:16
+ * 版权：大道金服
+ * 
+ */
+package com.ddjf.pojo;
+
+import java.util.List;
+
+/**
+ * 
+ * 构建组：大道金服科技部
+ * 作者:caihewei
+ * 日期:2017年8月4日上午10:25:16
+ * 功能说明：
+ * 
+ */
+public class Post {
+
+	private int id;
+	private String title;
+	private String content;
+	private String username;
+	private String date;
+	private List<Reply> list;
+	
+	/**
+	 * 获取属性方法
+	 * @return the content
+	 */
+	public String getContent() {
+		return content;
+	}
+
+	/**
+	 * 设置属性方法
+	 * @param content the content to set
+	 */
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	/**
+	 * 获取属性方法
+	 * @return the list
+	 */
+	public List<Reply> getList() {
+		return list;
+	}
+
+	/**
+	 * 设置属性方法
+	 * @param list the list to set
+	 */
+	public void setList(List<Reply> list) {
+		this.list = list;
+	}
+
+	/**
+	 * 获取属性方法
+	 * @return the id
+	 */
+	public int getId() {
+		return id;
+	}
+
+	/**
+	 * 设置属性方法
+	 * @param id the id to set
+	 */
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	/**
+	 * 获取属性方法
+	 * @return the title
+	 */
+	public String getTitle() {
+		return title;
+	}
+
+	/**
+	 * 设置属性方法
+	 * @param title the title to set
+	 */
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	/**
+	 * 获取属性方法
+	 * @return the username
+	 */
+	public String getUsername() {
+		return username;
+	}
+
+	/**
+	 * 设置属性方法
+	 * @param username the username to set
+	 */
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+
+	/**
+	 * 获取属性方法
+	 * @return the date
+	 */
+	public String getDate() {
+		return date;
+	}
+
+	/**
+	 * 设置属性方法
+	 * @param date the date to set
+	 */
+	public void setDate(String date) {
+		this.date = date;
+	}
+
+}
